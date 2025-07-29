@@ -1443,7 +1443,7 @@ def main(args):
         train_loss = 0.0
     #-------------------------------------------------------------------------#
         #print(1)
-        if True:
+        if epoch%5==0:
             #print("来一次")
     #这里创建了一个元mmeta_unet
             meta_unet = UNet2DConditionModel()
@@ -1622,7 +1622,7 @@ def main(args):
 
 
             #在这里使用cal_FID计算生成的一组图片与meta数据集的FID，然后利用FID进行梯度下降更新vnet参数
-            num_gen_images = 20  # FID计算需要足够样本，推荐500-1000
+            num_gen_images = 20
             generated_images = []
             generator = torch.Generator(device="cuda").manual_seed(40)
             for _ in range(num_gen_images // args.train_batch_size):
@@ -1635,8 +1635,8 @@ def main(args):
                         num_inference_steps=15,
                         generator=generator,
                         return_dict=False,
-                        output_type="pt",  # 直接返回张量，避免PIL图像转换导致的梯度丢失
-                        deterministic=True  # 启用确定性模式，减少随机操作
+                        output_type="pt",
+                        deterministic=True
                     )[0]
                     generated_images.append(images)
             # 2. 拼接生成图像为张量（形状：[num_gen_images, 3, H, W]）
@@ -1663,7 +1663,7 @@ def main(args):
             torch.cuda.empty_cache()  
                 # 1. 拆解管道，释放子组件（关键步骤）
             if 'pipe' in locals():
-                # 手动释放管道内的所有模型
+                
                 if hasattr(pipe, 'unet'):
                     del pipe.unet
                 if hasattr(pipe, 'vae'):
@@ -1674,7 +1674,7 @@ def main(args):
                     del pipe.text_encoder_2
                 del pipe  # 最后删除管道本身
 
-            # 2. 彻底删除元学习模型（强制解除所有引用）
+            
             if 'meta_unet' in locals():
                 meta_unet.cpu()  # 移到CPU，切断GPU关联
                 del meta_unet
