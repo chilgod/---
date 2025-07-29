@@ -2,7 +2,7 @@
 
 文生图去偏-元学习
 
-meta_unet.py是元学习版本的UnetConditional2d，继承MetaModule
+meta_unet.py是元学习版本的UNet2DConditionModel，继承MetaModule
 
 train_sdxl_with_metaunet.py是sdxl训练代码，针对不同属性的去偏只需设计好少量元数据集，然后修改此代码中的数据加载函数即可
 
